@@ -1,5 +1,6 @@
 'use strict';
 
+var fs = require('fs');
 var Dispatcher = require('./Dispatcher');
 var Quiz = require('./Quiz');
 
@@ -8,7 +9,11 @@ class QuizManager {
 		this.pool = [];
 		this.dispatcher = new Dispatcher({
 			'start': this.startCommand,
-			'stop': this.stopCommand
+			'pause': this.pauseCommand,
+			'resume': this.resumeCommand,
+			'stop': this.stopCommand,
+			'score': this.scoreCommand,
+			'list': this.listCommand
 		}, this.errorHandling);
 	}
 
@@ -40,21 +45,75 @@ class QuizManager {
 		let quiz = self.getQuiz(message.channel);
 		if (quiz != null) {
 			message.channel.send("The quiz has already started.");
-			return;
+		} else {
+			self.pool.push(new Quiz(message.channel, self));			
 		}
-		self.pool.push(new Quiz(message.channel));
+	}
+
+	pauseCommand(self, message, cmd) {
+		let quiz = self.getQuiz(message.channel);
+		if (quiz != null) {
+			quiz.pause();
+		} else {
+			message.channel.send("There is currently no running quiz to pause.");			
+		}
+	}
+
+	resumeCommand(self, message, cmd) {
+		let quiz = self.getQuiz(message.channel);
+		if (quiz != null) {
+			quiz.resume();
+		} else {
+			message.channel.send("There is currently no running quiz to resume.");			
+		}
 	}
 
 	stopCommand(self, message, cmd) {
-		let quiz = self.getQuiz(message.channel);
-		for (let i = 0; i < self.pool.length; ++i) {
-			if (self.pool[i].channel === message.channel) {
-				self.pool.splice(i, 1);
-				message.channel.send("Quiz stopped.");
-				return;
+		if (!self.stopQuiz(message.channel)) {
+			message.channel.send("There is currently no running quiz to stop.");
+		}
+	}
+
+	stopQuiz(channel, showScore = true) {
+		for (let i = 0; i < this.pool.length; ++i) {
+			if (this.pool[i].channel === channel) {
+				this.pool[i].stop(showScore);
+				this.pool.splice(i, 1);
+				return true;
 			}
 		}
-		message.channel.send("There is currently no running quiz to stop.");
+		return false;
+	}
+
+	scoreCommand(self, message, cmd) {
+		let quiz = self.getQuiz(message.channel);
+		if (quiz != null) {
+			quiz.showScore();
+		} else {
+			message.channel.send("There is currently no ongoing quiz.");
+		}
+	}
+
+	listCommand(self, message, cmd) {
+		fs.readdir('./quizzes', function(err, items) {
+			if (err) {
+				console.log(err.message);
+				message.channel.send("Woops, something broke. I'd recommand reading the logs ¯\\_(ツ)_/¯");
+				return;
+			}
+			if (items.length < 1) {
+				message.channel.send("No quiz currently available.");
+			} else {
+				let answer = 'Quizzes:';
+				for (let i = 0; i < items.length; ++i) {
+					let sp = items[i].split('.');
+					if (sp.length > 1 && sp[sp.length - 1] === 'txt') {
+						answer += ' ' + sp[0];
+					}
+				}
+				message.channel.send(answer);
+			}
+		});
 	}
 
 	errorHandling(self, message, cmd) {
