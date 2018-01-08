@@ -8,6 +8,7 @@ class Timer {
 	reset(callback, delay) {
 		if (this.id) {
 			clearTimeout(this.id);
+			this.id = null;
 		}
 		this.callback = callback;
 		this.delay = delay;
@@ -18,15 +19,15 @@ class Timer {
 	pause() {
 		if (this.id) {
 			clearTimeout(this.id);
-			this.remaining = new Date() - this.start;			
+			this.id = null;
+			this.remaining = new Date() - this.start;
 		}
 	}
 
 	resume() {
-		if (this.id) {
+		if (!this.id) {
 			this.start = new Date();
-			clearTimeout(this.id);
-			this.id = setTimeout(this.callback, this.remaining);			
+			this.id = setTimeout(this.callback, this.remaining);
 		}
 	}
 }

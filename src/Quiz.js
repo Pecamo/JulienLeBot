@@ -16,25 +16,32 @@ class Quiz {
 			if (err) {
 				this.failedInit(err);
 			} else {
-				this.nextQuestion();
+				setTimeout(() => { this.begin(); }, 500);
 			}
 		});
 	}
 
 	failedInit(err) {
-		this.channel.send("Unable to load the quiz questions: " + err + ".");
+		this.channel.send("Unable to load the quiz questions: " + err);
 		setTimeout(() => { this.manager.stopQuiz(this.channel, false); }, 1000);
 	}
 
+	begin() {
+		this.channel.send("Le quiz commencera dans 10 secondes.");
+		this.timer.reset(() => {
+			this.nextQuestion();
+		}, 10000);		
+	}
+
 	nextQuestion() {
-		this.channel.send("Pourquoi les patates ont-elles des ailes ?");
+		this.channel.send(this.questionsQueue.getCurrentQuestion());
 		this.timer.reset(() => {
 			this.giveHint();
 		}, 5000);
 	}
 
 	giveHint() {
-		this.channel.send("P...");
+		this.channel.send(this.questionsQueue.getHint());
 		this.timer.reset(() => {
 			this.endQuestion();
 		}, 5000);
@@ -42,19 +49,23 @@ class Quiz {
 
 	endQuestion(found = false) {
 		if (!found) {
-			this.channel.send("Ahalala, la réponse était: Parce que.");			
+			this.channel.send("Ahalala, la réponse était: " + this.questionsQueue.getFinalAnswer() + ".");
 		}
-		this.channel.send("Prochaine question dans 10 secondes.");
-		this.timer.reset(() => {
-			this.nextQuestion();
-		}, 10000);
+		if (this.questionsQueue.nextQuestion()) {
+			this.channel.send("Prochaine question dans 10 secondes.");
+			this.timer.reset(() => {
+				this.nextQuestion();
+			}, 10000);
+		} else {
+			this.manager.stopQuiz(this.channel);
+		}
 	}
 
 	checkAnswer(message) {
-		if (!this.paused && message.content === "toto") {
+		if (!this.paused && this.questionsQueue.checkAnswer(message.content)) {
 			this.scoreboard.addPoints(message.author, 1);
 			this.timer.pause();
-			this.channel.send("Oui, oui ! Bravo " + message.author);
+			this.channel.send("Oui, oui ! Bravo " + message.author + ", c'est bien **" + message.content + "**.");
 			this.endQuestion(true);
 		}
 	}
