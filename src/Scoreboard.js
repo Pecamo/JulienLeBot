@@ -1,5 +1,7 @@
 'use strict';
 
+var local = require('./localization');
+
 class Scoreboard {
 	constructor() {
 		this.scoreboard = [];
@@ -15,19 +17,45 @@ class Scoreboard {
 		this.scoreboard.push({'user': user, 'score': points});
 	}
 
-	showScore(channel, final = false) {
+	getPlaceEmoji(place) {
+		switch(place) {
+			case 1:
+				return ":first_place: ";
+				break;
+			case 2:
+				return ":second_place: ";
+				break;
+			case 3:
+				return ":third_place: ";
+				break;
+		}
+		return '';
+	}
+
+	showScore(channel) {
+		let content = {
+			color: 4886754,
+			title: local.get(local.data.quiz.scoreboardTitle),
+			description: ''
+		};
 		if (this.scoreboard.length > 0) {
 			this.scoreboard.sort(function(a, b) {
 				return a.score - b.score;
 			});
-			let answer = (final ? "Final score:\n" : "Score:\n");
+			let place = 1;
+			let realplace = place;
 			for (let i = 0; i < this.scoreboard.length; ++i) {
-				answer += this.scoreboard[i].user + ": " + this.scoreboard[i].score + "\n";
+				content.description += this.getPlaceEmoji(place);
+				content.description += "*" + this.scoreboard[i].user.username + "*\t\t\t" + this.scoreboard[i].score + "\n";
+				realplace++;
+				if (i < this.scoreboard.length - 1 && this.scoreboard[i].score > this.scoreboard[i + 1].score) {
+					place = realplace;
+				}
 			}
-			channel.send(answer);
 		} else {
-			channel.send("Nobody has point for now.");
+			content.description = local.get(local.data.quiz.noPoint);
 		}
+		channel.send({embed: content});
 	}
 }
 

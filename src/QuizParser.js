@@ -2,6 +2,12 @@
 
 var fs = require('fs');
 
+function replaceChar(str, idx, char) {
+	let tab = str.split('');
+	tab[idx] = char;
+	return tab.join('');
+}
+
 class QuizParser {
 	constructor() {
 		this.testQuestions = [];
@@ -114,16 +120,16 @@ class QuizParser {
 		if (answer[0] == '(') {
 			let par = 0;
 			for (let i = 0; i < answer.length; ++i) {
-				if (answer == '(') {
+				if (answer[i] == '(') {
 					par++;
 				}
-				if (answer == ')') {
+				if (answer[i] == ')') {
 					par--;
 					if (par == 0) {
 						if (i < answer.length - 1 && answer[i + 1] == ' ') {
-							answer[i + 1] = ')';
+							answer = replaceChar(answer, i + 1, ')');
 							while (answer[i--] == ')');
-							answer[i + 1] = ' ';
+							answer = replaceChar(answer, i + 2, ' ');
 							return answer;
 						}
 					}

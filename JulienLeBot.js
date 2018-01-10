@@ -6,7 +6,7 @@ const client = new Discord.Client();
 var AI = require('./src/interactions.js');
 
 client.on('ready', () => {
-	console.log('I am ready!');
+	console.log('Bot started.');
 });
 
 client.on('message', message => {
