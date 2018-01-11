@@ -1,10 +1,19 @@
 'use strict';
 
+var helpCommand = require('./help');
+var local = require('./localization');
 var Dispatcher = require('./Dispatcher');
 var cmdDispatcher = new Dispatcher({
 	'quiz': quizCommand,
 	'help': helpCommand
-}, errorHandling);
+}, errorHandling, {
+	'score': ['quiz', 'score'],
+	'start': ['quiz', 'start'],
+	'stop': ['quiz', 'stop'],
+	'pause': ['quiz', 'pause'],
+	'resume': ['quiz', 'resume'],
+	'list': ['quiz', 'list']
+});
 
 var QuizManager = require('./QuizManager');
 var qManager = new QuizManager();
@@ -14,22 +23,15 @@ function quizCommand(message, cmd) {
 	qManager.execute(message, cmd);
 }
 
-function helpCommand(message, cmd) {
-	message.channel.send({embed: {
-	  color: 3447003,
-	  description: "A very simple Embed!"
-	}});
-}
-
 function errorHandling(message, cmd) {
-	message.channel.send("Type `!help` to access the commands list.");
+	message.channel.send(local.info(local.data.commands.info));
 }
 
 function executeCommand(message) {
 	let cmd = message.content.toLowerCase().substring(1).split(" ");
 	if (cmd.length === 0) return;
 
-	cmdDispatcher.dispatch(cmd[0])(message, cmd);
+	cmdDispatcher.dispatch(cmd)(message, cmd);
 }
 
 module.exports.interact = function(message) {

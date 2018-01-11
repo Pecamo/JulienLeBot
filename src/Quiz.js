@@ -24,7 +24,7 @@ class Quiz {
 	}
 
 	failedInit(err) {
-		this.channel.send(local.get(local.data.quiz.error.chargement, err));
+		this.channel.send(local.error(local.data.quiz.error.chargement, err));
 		setTimeout(() => { this.manager.stopQuiz(this.channel, false); }, 1000);
 	}
 
@@ -65,19 +65,16 @@ class Quiz {
 
 	checkAnswer(message) {
 		if (!this.paused && this.questionsQueue.checkAnswer(message.content)) {
-			this.scoreboard.addPoints(message.author, 1);
+			let score = this.scoreboard.addPoints(message.author, 1);
 			this.timer.pause();
-			this.channel.send(local.get(local.data.quiz.goodAnswer, message.content, message.author.username));
+			this.channel.send(local.get(local.data.quiz.goodAnswer, message.content, message.author.username) + "\n" + local.get(local.data.quiz.userScore, message.author.username, score));
 			this.endQuestion(true);
 		}
 	}
 
 	pause() {
 		if (this.paused) {
-			this.channel.send({embed: {
-				color: 11278626,
-				description: local.get(local.data.quiz.error.alreadyPaused)
-			}});
+			this.channel.send(local.error(local.data.quiz.error.alreadyPaused));
 		} else {
 			this.paused = true;
 			this.timer.pause();
@@ -87,10 +84,7 @@ class Quiz {
 
 	resume() {
 		if (!this.paused) {
-			this.channel.send({embed: {
-				color: 11278626,
-				description: local.get(local.data.quiz.error.notPaused)
-			}});
+			this.channel.send(local.error(local.data.quiz.error.notPaused));
 		} else {
 			this.paused = false;
 			this.timer.resume();
@@ -104,6 +98,9 @@ class Quiz {
 
 	stop(showScore = true) {
 		this.timer.pause();
+		if (showScore) {
+			this.channel.send(local.get(local.data.quiz.end));
+		}
 		this.channel.send(local.get(local.data.quiz.stop));
 		if (showScore) {
 			this.showScore();

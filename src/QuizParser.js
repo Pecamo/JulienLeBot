@@ -1,6 +1,7 @@
 'use strict';
 
 var fs = require('fs');
+var local = require('./localization');
 
 function replaceChar(str, idx, char) {
 	let tab = str.split('');
@@ -16,8 +17,8 @@ class QuizParser {
 	parse(callback) {
 		fs.readdir('./quizzes', (err, items) => {
 			if (err) {
-				console.log("Readdir error: " + err);
-				callback("Unable to read quizzes directory.", []);
+				console.log(local.get(local.data.parser.log.readdir, './quizzes', err));
+				callback(local.get(local.data.parser.user.readdir), []);
 				return;
 			}
 			for (let i = 0; i < items.length;) {
@@ -29,25 +30,26 @@ class QuizParser {
 				}
 			}
 			if (!items.length) {
-				callback("No quiz available.", []);
+				callback(local.get(local.data.parser.user.noQuiz), []);
 				return;				
 			}
 			let parsed = 0;
-			let error = '';
+			let error = false;
 			for (let i = 0; i < items.length; ++i) {
 				fs.readFile('./quizzes/' + items[i], "latin1", (err, data) => {
 					if (err) {
-						console.log('Readfile error: ' + items[i] + ': ' + err);
-						error += 'Unable to read ' + items[i] + '.';
+						console.log(local.get(local.data.parser.log.readfile, items[i], err));
+						error = true;
 					} else if (!error) {
 						this.parseFileContent(data);
 					}
 					parsed++;
 					if (parsed >= items.length) {
 						if (error) {
-							callback(error, []);
+							callback(local.get(local.data.parser.user.readfile), []);
+						} else if (!this.testQuestions.length) {
+							callback(local.get(local.data.parser.user.noQuestion), []);
 						} else {
-							console.log(this.testQuestions);
 							callback(null, this.testQuestions);							
 						}
 					}
@@ -72,12 +74,13 @@ class QuizParser {
 			sp.pop();
 		}
 		if (sp.length < 2) {
-			console.log("Warning: Missing question or answer for the block:\n" + question + "\nQuestion ignored.");
+			console.log(local.get(local.data.parser.log.missingQA, question));
 			return;
 		}
+		let originals = sp.slice();
 		sp = this.cleanUp(sp);
 		let holes = (sp[0].match(/___/g) || []).length;
-		if (this.checkAnswersFormat(question, sp, holes)) {
+		if (this.checkAnswersFormat(question, sp, holes, originals)) {
 			if (holes) {
 				this.parseMultipleFormat(question, sp);
 			} else {
@@ -108,8 +111,63 @@ class QuizParser {
 		return sp;
 	}
 
-	checkAnswersFormat(question, sp, holes) {
+	checkArrows(question, answer, holes, original) {
+		if (answer.length > 2) {
+			console.log(local.get(local.data.parser.log.multipleArrows, original, question));
+			return false;
+		}
 		return true;
+	}
+
+	checkHoles(question, answer, holes, original) {
+		if (!holes && answer.length > 1) {
+			console.log(local.get(local.data.parser.log.noHole, original, question));
+			return false;
+		}
+		if (holes > 0 && answer[0].length != holes) {
+			console.log(local.get(local.data.parser.log.mismatchHoles, original, holes, answer[0].length, question));
+			return false;
+		}
+		return true;
+	}
+
+	checkParentheses(question, answer, original) {
+		for (let i = 0; i < answer.length; ++i) {
+			if (answer[i].constructor === String) {
+				let par = 0;
+				for (let char of answer[i]) {
+					if (char == '(') {
+						par++;
+					} else if (char == ')') {
+						par--;
+					}
+					if (par < 0) {
+						console.log(local.get(local.data.parser.log.mismatchRightParenthesis, original, question));
+						return false;
+					}
+				}
+				if (par > 0) {
+					console.log(local.get(local.data.parser.log.mismatchLeftParenthesis, original, question));
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+
+	checkAnswersFormat(question, sp, holes, originals) {
+		if (!holes && sp.length > 2) {
+			console.log(local.get(local.data.parser.log.tooManyAnswer, question));
+		}
+		for (let i = 1; i < sp.length; ++i) {
+			if (!this.checkArrows(question, sp[i], holes, originals[i]) ||
+				!this.checkHoles(question, sp[i], holes, originals[i]) ||
+				!this.checkParentheses(question, sp[i], originals[i])) {
+				sp.splice(i, 1);
+				i--;
+			}
+		}
+		return (sp.length > 1);
 	}
 
 	escapeRegExp(text) {

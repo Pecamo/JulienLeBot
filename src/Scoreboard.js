@@ -11,10 +11,11 @@ class Scoreboard {
 		for (let i = 0; i < this.scoreboard.length; ++i) {
 			if (this.scoreboard[i].user === user) {
 				this.scoreboard[i].score += points;
-				return ;
+				return this.scoreboard[i].score;
 			}
 		}
 		this.scoreboard.push({'user': user, 'score': points});
+		return points;
 	}
 
 	getPlaceEmoji(place) {
@@ -46,7 +47,7 @@ class Scoreboard {
 			let realplace = place;
 			for (let i = 0; i < this.scoreboard.length; ++i) {
 				content.description += this.getPlaceEmoji(place);
-				content.description += "*" + this.scoreboard[i].user.username + "*\t\t\t" + this.scoreboard[i].score + "\n";
+				content.description += "*" + this.scoreboard[i].user.username + "*\t\t\t\t\t" + this.scoreboard[i].score + "\n";
 				realplace++;
 				if (i < this.scoreboard.length - 1 && this.scoreboard[i].score > this.scoreboard[i + 1].score) {
 					place = realplace;

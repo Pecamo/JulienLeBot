@@ -2,23 +2,106 @@
 
 var local = 'FR';
 
+function getLocal(data, ...args) {
+	let line = data[local] || data['EN'] || data[Object.keys(data)[0]];
+	if (line.constructor === Array) {
+		line = line[Math.floor(Math.random() * line.length)];
+	}
+	if (!line) {
+		return '';
+	}
+	for (let i = 1; i < arguments.length; ++i) {
+		line = line.replace(new RegExp("\\$" + i, "g"), arguments[i]);
+	}
+	return line;
+}
+
 module.exports = {
-	get: function(data) {
-		let line = data[local];
-		if (line.constructor === Array) {
-			line = line[Math.floor(Math.random() * line.length)];
-		}
-		if (!line) {
-			return '';
-		}
-		for (let i = 1; i < arguments.length; ++i) {
-			line = line.replace(new RegExp("\\$" + i, "g"), arguments[i]);
-		}
-		return line;
+	get: getLocal,
+	error: function(data, ...args) {
+		return {embed: {
+			color: 11278626,
+			description: getLocal(data, ...args)
+		}};
+	},
+	info: function(data, ...args) {
+		return {embed: {
+			color: 4886754,
+			description: getLocal(data, ...args)
+		}};
 	},
 	data: {
 		commands: {
-
+			info: {
+				FR: "`!help` pour accéder à la liste des commandes."
+			},
+			quiz: {
+				error: {
+					noDM: {
+						FR: "Cette commande est uniquement disponible sur un channel public."
+					},
+					noOption: {
+						FR: "La commande `!quiz` nécessite une option. `!help quiz` pour plus d'informations."
+					},
+					wrongOption: {
+						FR: "`$1` n'est pas une option valide. `!help quiz` pour plus d'informations."
+					},
+					alreadyStarted: {
+						FR: "Un quiz est déjà lancé sur ce channel."
+					},
+					noQuizRunning: {
+						FR: "Aucun quiz d'actif sur ce channel."
+					}
+				},
+				noCategory: {
+					FR: "Aucun quiz à disposition."
+				}
+			}
+		},
+		parser: {
+			log: {
+				readdir: {
+					EN: "Readdir error: $1: $2."
+				},
+				readfile: {
+					EN: "Readfile error: $1: $2."
+				},
+				missingQA: {
+					EN: "Warning: Missing question or answer for the block:\n$1\nQuestion ignored."
+				},
+				tooManyAnswer: {
+					EN: "Warning: The following question has multiple answers but no hole. Only the first answer will be used.\n$1"
+				},
+				multipleArrows: {
+					EN: "Error: The answer '$1' must only contain one arrow for the following question block.\n$2"
+				},
+				noHole: {
+					EN: "Error: The following question block has no hole, but the answer '$1' contains fillers.\n$2"
+				},
+				mismatchHoles: {
+					EN: "Error: Holes number do not match for the answer '$1'. $2 hole(s) in the question but $3 possibilities given in the answer for the following question block.\n$4"
+				},
+				mismatchRightParenthesis: {
+					EN: "Error: Mismatch ')' in answer '$1' for the following question block.\n$2"
+				},
+				mismatchLeftParenthesis: {
+					EN:  "Error: Mismatch '(' in answer '$1' for the following question block.\n$2"
+				}
+			},
+			user: {
+				readdir: {
+					FR: "Impossible d'accéder au dossier contenant les quiz."
+				},
+				noQuiz: {
+					FR: "Aucun fichier de quiz trouvé."
+				},
+				noQuestion: {
+					FR: "Aucune question valide n'a été trouvée."
+				},
+				readfile: {
+					FR: "Une erreur est survenue lors de la lecture des quiz."
+				}
+			}
 		},
 		quiz: {
 			error: {
@@ -69,7 +152,7 @@ module.exports = {
 					"Oui bien sûr, **$1**.",
 					"Ah oui oui oui oui ! **$1** !",
 					"Oui oui oui oui oui, **$1**.",
-					"C'est oui ! $1 !",
+					"C'est oui ! **$1** !",
 					"Oui, **$1**, d'accord.",
 					"**$1**, voilà...",
 					"**$1**, voilà, d'accord.",
@@ -108,6 +191,9 @@ module.exports = {
 					"C'était *Questions pour du Fnu*, merci d'avoir joué.",
 					"C'était *Question pour du Fnu* ! Très bonne soirée à tous, à demain !"
 				]
+			},
+			userScore: {
+				FR: "*($1, $2 points)*"
 			},
 			scoreboardTitle: {
 				FR: "Scores"

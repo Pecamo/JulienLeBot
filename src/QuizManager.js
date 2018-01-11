@@ -1,6 +1,8 @@
 'use strict';
 
 var fs = require('fs');
+
+var local = require('./localization');
 var Dispatcher = require('./Dispatcher');
 var Quiz = require('./Quiz');
 
@@ -35,16 +37,20 @@ class QuizManager {
 
 	execute(message, cmd) {
 		if (cmd.length == 0) {
-			message.channel.send("`!quiz` has to be used with an option. Use `!help quiz` for more informations.");
+			message.channel.send(local.error(local.data.commands.quiz.error.noOption));
 			return;
 		}
-		this.dispatcher.dispatch(cmd[0])(this, message, cmd);
+		this.dispatcher.dispatch(cmd)(this, message, cmd);
 	}
 
 	startCommand(self, message, cmd) {
+		if (message.channel.type == 'dm') {
+			message.channel.send(local.error(local.data.commands.quiz.error.noDM));
+			return;
+		}
 		let quiz = self.getQuiz(message.channel);
 		if (quiz != null) {
-			message.channel.send("The quiz has already started.");
+			message.channel.send(local.error(local.data.commands.quiz.error.alreadyStarted));
 		} else {
 			self.pool.push(new Quiz(message.channel, self));			
 		}
@@ -55,7 +61,7 @@ class QuizManager {
 		if (quiz != null) {
 			quiz.pause();
 		} else {
-			message.channel.send("There is currently no running quiz to pause.");			
+			message.channel.send(local.error(local.data.commands.quiz.error.noQuizRunning));
 		}
 	}
 
@@ -64,13 +70,13 @@ class QuizManager {
 		if (quiz != null) {
 			quiz.resume();
 		} else {
-			message.channel.send("There is currently no running quiz to resume.");			
+			message.channel.send(local.error(local.data.commands.quiz.error.noQuizRunning));
 		}
 	}
 
 	stopCommand(self, message, cmd) {
 		if (!self.stopQuiz(message.channel)) {
-			message.channel.send("There is currently no running quiz to stop.");
+			message.channel.send(local.error(local.data.commands.quiz.error.noQuizRunning));
 		}
 	}
 
@@ -90,19 +96,19 @@ class QuizManager {
 		if (quiz != null) {
 			quiz.showScore();
 		} else {
-			message.channel.send("There is currently no ongoing quiz.");
+			message.channel.send(local.error(local.data.commands.quiz.error.noQuizRunning));
 		}
 	}
 
 	listCommand(self, message, cmd) {
 		fs.readdir('./quizzes', function(err, items) {
 			if (err) {
-				console.log(err.message);
-				message.channel.send("Woops, something broke. I'd recommand reading the logs ¯\\_(ツ)_/¯");
+				console.log(local.error(local.data.parser.log.readdir, './quizzes', err));
+				callback(local.get(local.data.parser.user.readdir), []);
 				return;
 			}
 			if (items.length < 1) {
-				message.channel.send("No quiz currently available.");
+				message.channel.send(local.get(local.data.commands.quiz.noCategory));
 			} else {
 				let answer = 'Quizzes:';
 				for (let i = 0; i < items.length; ++i) {
@@ -117,7 +123,7 @@ class QuizManager {
 	}
 
 	errorHandling(self, message, cmd) {
-		message.channel.send(cmd[0] + " is not a quiz command. Use `!help quiz` for a list of available commands.");
+		message.channel.send(local.error(local.data.commands.quiz.error.wrongOption, cmd[0]));
 	}
 }
 
