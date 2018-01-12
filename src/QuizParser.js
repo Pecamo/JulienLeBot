@@ -17,7 +17,7 @@ class QuizParser {
 	parse(callback) {
 		fs.readdir('./quizzes', (err, items) => {
 			if (err) {
-				console.log(local.get(local.data.parser.log.readdir, './quizzes', err));
+				console.log(local.get(local.data.parser.log.readdir, {directory: './quizzes', error: err}));
 				callback(local.get(local.data.parser.user.readdir), []);
 				return;
 			}
@@ -38,7 +38,7 @@ class QuizParser {
 			for (let i = 0; i < items.length; ++i) {
 				fs.readFile('./quizzes/' + items[i], "utf8", (err, data) => {
 					if (err) {
-						console.log(local.get(local.data.parser.log.readfile, items[i], err));
+						console.log(local.get(local.data.parser.log.readfile, {file: items[i], error: err}));
 						error = true;
 					} else if (!error) {
 						this.parseFileContent(data);
@@ -62,6 +62,7 @@ class QuizParser {
 		// Remove comments
 		content = content.replace(/(\/{3,}.*(?:\r?\n|\r)?)/g, "");
 		let questions = content.match(/((?:.+(?:\r?\n|\r)?)+)/g);
+		if (!questions) return;
 		for (let i = 0; i < questions.length; ++i) {
 			this.parseQuestion(questions[i]);
 		}
@@ -74,7 +75,7 @@ class QuizParser {
 			sp.pop();
 		}
 		if (sp.length < 2) {
-			console.log(local.get(local.data.parser.log.missingQA, question));
+			console.log(local.get(local.data.parser.log.missingQA, {question: question}));
 			return;
 		}
 		let originals = sp.slice();
@@ -113,7 +114,7 @@ class QuizParser {
 
 	checkArrows(question, answer, holes, original) {
 		if (answer.length > 2) {
-			console.log(local.get(local.data.parser.log.multipleArrows, original, question));
+			console.log(local.get(local.data.parser.log.multipleArrows, {answer: original, question: question}));
 			return false;
 		}
 		return true;
@@ -121,11 +122,11 @@ class QuizParser {
 
 	checkHoles(question, answer, holes, original) {
 		if (!holes && answer.length > 1) {
-			console.log(local.get(local.data.parser.log.noHole, original, question));
+			console.log(local.get(local.data.parser.log.noHole, {answer: original, question: question}));
 			return false;
 		}
 		if (holes > 0 && answer[0].length != holes) {
-			console.log(local.get(local.data.parser.log.mismatchHoles, original, holes, answer[0].length, question));
+			console.log(local.get(local.data.parser.log.mismatchHoles, {answer: original, question_holes: holes, answer_opt: answer[0].length, question: question}));
 			return false;
 		}
 		return true;
@@ -142,12 +143,12 @@ class QuizParser {
 						par--;
 					}
 					if (par < 0) {
-						console.log(local.get(local.data.parser.log.mismatchRightParenthesis, original, question));
+						console.log(local.get(local.data.parser.log.mismatchRightParenthesis, {answer: original, question: question}));
 						return false;
 					}
 				}
 				if (par > 0) {
-					console.log(local.get(local.data.parser.log.mismatchLeftParenthesis, original, question));
+					console.log(local.get(local.data.parser.log.mismatchLeftParenthesis, {answer: original, question: question}));
 					return false;
 				}
 			}
@@ -157,7 +158,7 @@ class QuizParser {
 
 	checkAnswersFormat(question, sp, holes, originals) {
 		if (!holes && sp.length > 2) {
-			console.log(local.get(local.data.parser.log.tooManyAnswer, question));
+			console.log(local.get(local.data.parser.log.tooManyAnswer, {question: question}));
 		}
 		for (let i = 1; i < sp.length; ++i) {
 			if (!this.checkArrows(question, sp[i], holes, originals[i]) ||

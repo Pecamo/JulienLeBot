@@ -2,7 +2,7 @@
 
 var local = 'FR';
 
-function getLocal(data, ...args) {
+function getLocal(data, args = {}) {
 	let line = data[local] || data['EN'] || data[Object.keys(data)[0]];
 	if (line.constructor === Array) {
 		line = line[Math.floor(Math.random() * line.length)];
@@ -10,25 +10,29 @@ function getLocal(data, ...args) {
 	if (!line) {
 		return '';
 	}
-	for (let i = 1; i < arguments.length; ++i) {
-		line = line.replace(new RegExp("\\$" + i, "g"), arguments[i]);
+	for (let key in args) {
+		line = line.replace(new RegExp("\{" + key + "\}", "g"), args[key]);
 	}
 	return line;
 }
 
 module.exports = {
 	get: getLocal,
-	error: function(data, ...args) {
+	error: function(data, args = {}) {
 		return {embed: {
 			color: 11278626,
-			description: getLocal(data, ...args)
+			description: getLocal(data, args)
 		}};
 	},
-	info: function(data, ...args) {
+	info: function(data, args = {}) {
 		return {embed: {
 			color: 4886754,
-			description: getLocal(data, ...args)
+			description: getLocal(data, args)
 		}};
+	},
+	infoCustom: function(data, embedData, args = {}) {
+		embedData.color = 4886754;
+		return {embed: embedData};
 	},
 	data: {
 		commands: {
@@ -44,7 +48,7 @@ module.exports = {
 						FR: "La commande `!quiz` nécessite une option. `!help quiz` pour plus d'informations."
 					},
 					wrongOption: {
-						FR: "`$1` n'est pas une option valide. `!help quiz` pour plus d'informations."
+						FR: "`{option}` n'est pas une option valide. `!help quiz` pour plus d'informations."
 					},
 					alreadyStarted: {
 						FR: "Un quiz est déjà lancé sur ce channel."
@@ -61,31 +65,31 @@ module.exports = {
 		parser: {
 			log: {
 				readdir: {
-					EN: "Readdir error: $1: $2."
+					EN: "Readdir error: {directory}: {error}."
 				},
 				readfile: {
-					EN: "Readfile error: $1: $2."
+					EN: "Readfile error: {file}: {error}."
 				},
 				missingQA: {
-					EN: "Warning: Missing question or answer for the block:\n$1\nQuestion ignored."
+					EN: "Warning: Missing question or answer for the block:\n{question}\nQuestion ignored."
 				},
 				tooManyAnswer: {
-					EN: "Warning: The following question has multiple answers but no hole. Only the first answer will be used.\n$1"
+					EN: "Warning: The following question has multiple answers but no hole. Only the first answer will be used.\n{question}"
 				},
 				multipleArrows: {
-					EN: "Error: The answer '$1' must only contain one arrow for the following question block.\n$2"
+					EN: "Error: The answer '{answer}' must only contain one arrow for the following question block.\n{question}"
 				},
 				noHole: {
-					EN: "Error: The following question block has no hole, but the answer '$1' contains fillers.\n$2"
+					EN: "Error: The following question block has no hole, but the answer '{answer}' contains fillers.\n{question}"
 				},
 				mismatchHoles: {
-					EN: "Error: Holes number do not match for the answer '$1'. $2 hole(s) in the question but $3 possibilities given in the answer for the following question block.\n$4"
+					EN: "Error: Holes number do not match for the answer '{answer}'. {question_holes} hole(s) in the question but {answer_opt} possibilities given in the answer for the following question block.\n{question}"
 				},
 				mismatchRightParenthesis: {
-					EN: "Error: Mismatch ')' in answer '$1' for the following question block.\n$2"
+					EN: "Error: Mismatch ')' in answer '{answer}' for the following question block.\n{question}"
 				},
 				mismatchLeftParenthesis: {
-					EN:  "Error: Mismatch '(' in answer '$1' for the following question block.\n$2"
+					EN:  "Error: Mismatch '(' in answer '{answer}' for the following question block.\n{question}"
 				}
 			},
 			user: {
@@ -112,7 +116,7 @@ module.exports = {
 					FR: "Le quiz n'est pas en pause."
 				},
 				chargement: {
-					FR: "Impossible de charger les questions du quiz: $1"
+					FR: "Impossible de charger les questions du quiz: {error}"
 				}
 			},
 			start: {
@@ -122,7 +126,7 @@ module.exports = {
 				FR: "**Quiz terminé**"
 			},
 			begin: {
-				FR: "Bienvenue à tous pour cette nouvelle session de *Question pour du fnu* !\n*(Le quiz commencera dans $1 secondes)*"
+				FR: "Bienvenue à tous pour cette nouvelle session de *Question pour du fnu* !\n*(Le quiz commencera dans {seconds} secondes)*"
 			},
 			pause: {
 				FR: "On se retrouve après une courte page de pub!\n**Quiz mis en pause**"
@@ -132,58 +136,58 @@ module.exports = {
 			},
 			question: {
 				FR: [
-					"Top... **$1**",
-					"**$1**"
+					"Top... **{question}**",
+					"**{question}**"
 				]
 			},
 			categoryQuestion: {
 				FR: [
-					"Dans la catégorie *$2*, **$1**",
-					"En *$2*, **$1**",
-					"Nous avons *$2*... Top ! **$1**",
-					"*$2*... Top ! **$1**"
+					"Dans la catégorie *{category}*, **{question}**",
+					"En *{category}*, **{question}**",
+					"Nous avons *{category}*... Top ! **{question}**",
+					"*{category}*... Top ! **{question}**"
 				]
 			},
 			nextQuestion: {
-				FR: "*(Prochaine question dans $1 secondes.)*"
+				FR: "*(Prochaine question dans {seconds} secondes.)*"
 			},
 			goodAnswer: {
 				FR: [
-					"Oui bien sûr, **$1**.",
-					"Ah oui oui oui oui ! **$1** !",
-					"Oui oui oui oui oui, **$1**.",
-					"C'est oui ! **$1** !",
-					"Oui, **$1**, d'accord.",
-					"**$1**, voilà...",
-					"**$1**, voilà, d'accord.",
-					"Voilà, **$1**.",
-					"Mais bien sûr, **$1** !",
-					"Mais oui, d'accord, **$1**.",
-					"**$1**, d'accord.",
-					"**$1**, bien sûr !",
-					"Exactement, **$1**, d'accord.",
-					"**$1**, oui !",
-					"**$1**, ça c'est bon.",
-					"Bien sûr ! **$1**.",
-					"Exactement, **$1**.",
-					"Oh oui ! **$1** !",
-					"C'est bien **$1** !",
-					"**$1**, très bien.",
-					"**$1**, ah oui, bien joué *$2*.",
-					"**$1**, *$2* a raison.",
-					"**$1**, très bonne réponse de *$2* qui s'en sort bien.",
-					"**$1**, bien joué *$2*.",
-					"Oui oui **$1**, *$2*."
+					"Oui bien sûr, **{answer}**.",
+					"Ah oui oui oui oui ! **{answer}** !",
+					"Oui oui oui oui oui, **{answer}**.",
+					"C'est oui ! **{answer}** !",
+					"Oui, **{answer}**, d'accord.",
+					"**{answer}**, voilà...",
+					"**{answer}**, voilà, d'accord.",
+					"Voilà, **{answer}**.",
+					"Mais bien sûr, **{answer}** !",
+					"Mais oui, d'accord, **{answer}**.",
+					"**{answer}**, d'accord.",
+					"**{answer}**, bien sûr !",
+					"Exactement, **{answer}**, d'accord.",
+					"**{answer}**, oui !",
+					"**{answer}**, ça c'est bon.",
+					"Bien sûr ! **{answer}**.",
+					"Exactement, **{answer}**.",
+					"Oh oui ! **{answer}** !",
+					"C'est bien **{answer}** !",
+					"**{answer}**, très bien.",
+					"**{answer}**, ah oui, bien joué *{username}*.",
+					"**{answer}**, *{username}* a raison.",
+					"**{answer}**, très bonne réponse de *{username}* qui s'en sort bien.",
+					"**{answer}**, bien joué *{username}*.",
+					"Oui oui **{answer}**, *{username}*."
 				]
 			},
 			noAnswer: {
 				FR: [
-					"Non non... **$1**.",
-					"Non, ça c'est non... **$1**.",
-					"C'est pas ça du tout... c'est **$1**.",
-					"... **$1**.",
-					"... **$1**, $1.",
-					"Réponse, **$1**."
+					"Non non... **{answer}**.",
+					"Non, ça c'est non... **{answer}**.",
+					"C'est pas ça du tout... c'est **{answer}**.",
+					"... **{answer}**.",
+					"... **{answer}**, {answer}.",
+					"Réponse, **{answer}**."
 				]
 			},
 			end: {
@@ -193,7 +197,7 @@ module.exports = {
 				]
 			},
 			userScore: {
-				FR: "*($1, $2 points)*"
+				FR: "*({username}, {score} points)*"
 			},
 			scoreboardTitle: {
 				FR: ":trophy: Tableau des scores"

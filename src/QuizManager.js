@@ -103,7 +103,7 @@ class QuizManager {
 	listCommand(self, message, cmd) {
 		fs.readdir('./quizzes', function(err, items) {
 			if (err) {
-				console.log(local.error(local.data.parser.log.readdir, './quizzes', err));
+				console.log(local.error(local.data.parser.log.readdir, {directory: './quizzes', error: err}));
 				callback(local.get(local.data.parser.user.readdir), []);
 				return;
 			}
@@ -123,7 +123,7 @@ class QuizManager {
 	}
 
 	errorHandling(self, message, cmd) {
-		message.channel.send(local.error(local.data.commands.quiz.error.wrongOption, cmd[0]));
+		message.channel.send(local.error(local.data.commands.quiz.error.wrongOption, {option: cmd[0]}));
 	}
 }
 

@@ -6,6 +6,8 @@ var QuestionsQueue = require('./QuestionsQueue');
 var Timer = require('./Timer');
 var Scoreboard = require('./Scoreboard');
 
+const QUIZ_TIMER = 4;
+
 class Quiz {
 	constructor(channel, quizManager) {
 		this.channel = channel;
@@ -24,37 +26,37 @@ class Quiz {
 	}
 
 	failedInit(err) {
-		this.channel.send(local.error(local.data.quiz.error.chargement, err));
+		this.channel.send(local.error(local.data.quiz.error.chargement, {error: err}));
 		setTimeout(() => { this.manager.stopQuiz(this.channel, false); }, 1000);
 	}
 
 	begin() {
-		this.channel.send(local.get(local.data.quiz.begin, 10));
+		this.channel.send(local.get(local.data.quiz.begin, {seconds: 10}));
 		this.timer.reset(() => {
 			this.nextQuestion();
 		}, 10000);		
 	}
 
 	nextQuestion() {
-		this.channel.send(local.get(local.data.quiz.question, this.questionsQueue.getCurrentQuestion()));
+		this.channel.send(local.get(local.data.quiz.question, {question: this.questionsQueue.getCurrentQuestion()}));
 		this.timer.reset(() => {
 			this.giveHint();
-		}, 20000);
+		}, QUIZ_TIMER / 2 * 1000);
 	}
 
 	giveHint() {
 		this.channel.send(this.questionsQueue.getHint());
 		this.timer.reset(() => {
 			this.endQuestion();
-		}, 20000);
+		}, QUIZ_TIMER / 2 * 1000);
 	}
 
 	endQuestion(found = false) {
 		if (!found) {
-			this.channel.send(local.get(local.data.quiz.noAnswer, this.questionsQueue.getFinalAnswer()));
+			this.channel.send(local.get(local.data.quiz.noAnswer, {answer: this.questionsQueue.getFinalAnswer()}));
 		}
 		if (this.questionsQueue.nextQuestion()) {
-			this.channel.send(local.get(local.data.quiz.nextQuestion, 10));
+			this.channel.send(local.get(local.data.quiz.nextQuestion, {seconds: 10}));
 			this.timer.reset(() => {
 				this.nextQuestion();
 			}, 10000);
@@ -67,7 +69,7 @@ class Quiz {
 		if (!this.paused && this.questionsQueue.checkAnswer(message.content)) {
 			let score = this.scoreboard.addPoints(message.author, 1);
 			this.timer.pause();
-			this.channel.send(local.get(local.data.quiz.goodAnswer, message.content, message.author.username) + "\n" + local.get(local.data.quiz.userScore, message.author.username, score));
+			this.channel.send(local.get(local.data.quiz.goodAnswer, {answer: message.content, username: message.author.username}) + "\n" + local.get(local.data.quiz.userScore, {username: message.author.username, score: score}));
 			this.endQuestion(true);
 		}
 	}
