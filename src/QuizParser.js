@@ -36,7 +36,7 @@ class QuizParser {
 			let parsed = 0;
 			let error = false;
 			for (let i = 0; i < items.length; ++i) {
-				fs.readFile('./quizzes/' + items[i], "latin1", (err, data) => {
+				fs.readFile('./quizzes/' + items[i], "utf8", (err, data) => {
 					if (err) {
 						console.log(local.get(local.data.parser.log.readfile, items[i], err));
 						error = true;

@@ -39,14 +39,14 @@ class Quiz {
 		this.channel.send(local.get(local.data.quiz.question, this.questionsQueue.getCurrentQuestion()));
 		this.timer.reset(() => {
 			this.giveHint();
-		}, 5000);
+		}, 20000);
 	}
 
 	giveHint() {
 		this.channel.send(this.questionsQueue.getHint());
 		this.timer.reset(() => {
 			this.endQuestion();
-		}, 5000);
+		}, 20000);
 	}
 
 	endQuestion(found = false) {

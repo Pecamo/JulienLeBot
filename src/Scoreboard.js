@@ -36,23 +36,40 @@ class Scoreboard {
 	showScore(channel) {
 		let content = {
 			color: 4886754,
-			title: local.get(local.data.quiz.scoreboardTitle),
-			description: ''
+			title: "**" + local.get(local.data.quiz.scoreboardTitle) + "**",
+			fields: []
 		};
 		if (this.scoreboard.length > 0) {
 			this.scoreboard.sort(function(a, b) {
-				return a.score - b.score;
+				return b.score - a.score;
 			});
 			let place = 1;
 			let realplace = place;
+			let names = ""
+			let scores = "";
 			for (let i = 0; i < this.scoreboard.length; ++i) {
-				content.description += this.getPlaceEmoji(place);
-				content.description += "*" + this.scoreboard[i].user.username + "*\t\t\t\t\t" + this.scoreboard[i].score + "\n";
 				realplace++;
+				if (i > 0) {
+					names += '\n';
+					scores += '\n';
+				}
+				names += this.getPlaceEmoji(place) + "*" + this.scoreboard[i].user.username + "*<:empty:401167295256461315>";
+				scores += this.scoreboard[i].score + "<:empty:401167295256461315>";
 				if (i < this.scoreboard.length - 1 && this.scoreboard[i].score > this.scoreboard[i + 1].score) {
 					place = realplace;
 				}
 			}
+			content.fields.push({
+				name: "Username",
+				value: names,
+				inline: true
+			});
+			content.fields.push({
+				name: "Score",
+				value: scores,
+				inline: true
+			});
+
 		} else {
 			content.description = local.get(local.data.quiz.noPoint);
 		}

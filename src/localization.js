@@ -196,7 +196,7 @@ module.exports = {
 				FR: "*($1, $2 points)*"
 			},
 			scoreboardTitle: {
-				FR: "Scores"
+				FR: ":trophy: Tableau des scores"
 			},
 			noPoint: {
 				FR: "Personne n'a de point ¯\\_(ツ)_/¯"
