@@ -1,10 +1,10 @@
 'use strict';
 
-var local = require('./localization');
+const local = require('./localization');
 
-var QuestionsQueue = require('./QuestionsQueue');
-var Timer = require('./Timer');
-var Scoreboard = require('./Scoreboard');
+const QuestionsQueue = require('./QuestionsQueue');
+const Timer = require('./Timer');
+const Scoreboard = require('./Scoreboard');
 
 const QUIZ_TIMER = 40;
 

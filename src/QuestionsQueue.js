@@ -1,6 +1,6 @@
 'use strict';
 
-var QuizParser = require('./QuizParser');
+const QuizParser = require('./QuizParser');
 
 /** Returns a random integer between min (inclusive) and max (inclusive) */
 function getRandomInt(min, max) {

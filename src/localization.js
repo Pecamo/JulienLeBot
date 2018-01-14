@@ -1,6 +1,6 @@
 'use strict';
 
-var local = 'FR';
+const local = 'FR';
 
 function getLocal(data, args = {}) {
 	let line = data[local] || data['EN'] || data[Object.keys(data)[0]];

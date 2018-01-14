@@ -1,7 +1,7 @@
 'use strict';
 
-var local = require('./localization');
-var fs = require('fs');
+const local = require('./localization');
+const fs = require('fs');
 
 class Scoreboard {
 	constructor() {
@@ -23,13 +23,10 @@ class Scoreboard {
 		switch(place) {
 			case 1:
 				return ":first_place: ";
-				break;
 			case 2:
 				return ":second_place: ";
-				break;
 			case 3:
 				return ":third_place: ";
-				break;
 		}
 		return '';
 	}
@@ -61,7 +58,7 @@ class Scoreboard {
 			});
 			let place = 1;
 			let realplace = place;
-			let names = ""
+			let names = "";
 			let scores = "";
 			for (let i = 0; i < this.scoreboard.length; ++i) {
 				realplace++;
