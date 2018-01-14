@@ -12,7 +12,8 @@ var cmdDispatcher = new Dispatcher({
 	'stop': ['quiz', 'stop'],
 	'pause': ['quiz', 'pause'],
 	'resume': ['quiz', 'resume'],
-	'list': ['quiz', 'list']
+	'list': ['quiz', 'list'],
+	'left': ['quiz', 'left']
 });
 
 var QuizManager = require('./QuizManager');

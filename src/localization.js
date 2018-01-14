@@ -206,6 +206,9 @@ module.exports = {
 			},
 			noPoint: {
 				FR: "Personne n'a de point ¯\\_(ツ)_/¯"
+			},
+			count: {
+				FR: "Il reste encore {questions_count} question(s)."
 			}
 		}
 	}

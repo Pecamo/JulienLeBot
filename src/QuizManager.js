@@ -15,7 +15,8 @@ class QuizManager {
 			'resume': this.resumeCommand,
 			'stop': this.stopCommand,
 			'score': this.scoreCommand,
-			'list': this.listCommand
+			'list': this.listCommand,
+			'left': this.leftCommand
 		}, this.errorHandling);
 	}
 
@@ -120,6 +121,15 @@ class QuizManager {
 				message.channel.send(answer);
 			}
 		});
+	}
+
+	leftCommand(self, message, cmd) {
+		let quiz = self.getQuiz(message.channel);
+		if (quiz != null) {
+			quiz.questionsLeft();
+		} else {
+			message.channel.send(local.error(local.data.commands.quiz.error.noQuizRunning));
+		}
 	}
 
 	errorHandling(self, message, cmd) {

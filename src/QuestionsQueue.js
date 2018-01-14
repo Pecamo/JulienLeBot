@@ -51,6 +51,10 @@ class QuestionsQueue {
 		this.qid = getRandomInt(0, this.questions.length - 1);
 		return true;
 	}
+
+	count() {
+		return this.questions.length;
+	}
 }
 
 module.exports = QuestionsQueue;

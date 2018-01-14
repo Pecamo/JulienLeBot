@@ -108,6 +108,10 @@ class Quiz {
 		this.scoreboard.showScore(this.channel);
 	}
 
+	questionsLeft() {
+		this.channel.send(local.info(local.data.quiz.count, {questions_count: this.questionsQueue.count()}));
+	}
+
 	stop(showScore = true) {
 		this.timer.pause();
 		if (showScore) {
