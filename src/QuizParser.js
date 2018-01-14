@@ -1,7 +1,7 @@
 'use strict';
 
-var fs = require('fs');
-var local = require('./localization');
+const fs = require('fs');
+const local = require('./localization');
 
 function replaceChar(str, idx, char) {
 	let tab = str.split('');

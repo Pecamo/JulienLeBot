@@ -1,8 +1,8 @@
 'use strict';
 
-var local = require('./localization')
-var Dispatcher = require('./Dispatcher');
-var helpDispatcher = new Dispatcher({
+const local = require('./localization');
+const Dispatcher = require('./Dispatcher');
+const helpDispatcher = new Dispatcher({
 	'quiz': quizHelp
 }, errorHandling);
 

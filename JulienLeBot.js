@@ -3,7 +3,7 @@
 const Discord = require('discord.js');
 const client = new Discord.Client();
 
-var AI = require('./src/interactions.js');
+const AI = require('./src/interactions.js');
 
 client.on('ready', () => {
 	console.log('Bot started.');

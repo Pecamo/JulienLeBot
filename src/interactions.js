@@ -1,9 +1,9 @@
 'use strict';
 
-var helpCommand = require('./help');
-var local = require('./localization');
-var Dispatcher = require('./Dispatcher');
-var cmdDispatcher = new Dispatcher({
+const helpCommand = require('./help');
+const local = require('./localization');
+const Dispatcher = require('./Dispatcher');
+const cmdDispatcher = new Dispatcher({
 	'quiz': quizCommand,
 	'help': helpCommand
 }, errorHandling, {
@@ -16,8 +16,8 @@ var cmdDispatcher = new Dispatcher({
 	'left': ['quiz', 'left']
 });
 
-var QuizManager = require('./QuizManager');
-var qManager = new QuizManager();
+const QuizManager = require('./QuizManager');
+const qManager = new QuizManager();
 
 function quizCommand(message, cmd) {
 	cmd.shift();
@@ -46,4 +46,4 @@ module.exports.interact = function(message) {
 	if (message.content === 'ping') {
 	    message.channel.send('Qui se permet de pinger le grand Julien LeBot ?');
   	}
-}
+};

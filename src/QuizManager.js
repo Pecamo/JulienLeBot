@@ -1,10 +1,10 @@
 'use strict';
 
-var fs = require('fs');
+const fs = require('fs');
 
-var local = require('./localization');
-var Dispatcher = require('./Dispatcher');
-var Quiz = require('./Quiz');
+const local = require('./localization');
+const Dispatcher = require('./Dispatcher');
+const Quiz = require('./Quiz');
 
 class QuizManager {
 	constructor() {
