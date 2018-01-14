@@ -9,6 +9,26 @@ function replaceChar(str, idx, char) {
 	return tab.join('');
 }
 
+function encodeEscape(str) {
+	return (str.replace(/\\(.|\r?\n|\r)/g, function(a, b) {
+		return ("%" + b.charCodeAt(0) + "%");
+	}));
+}
+
+function decodeEscape(str) {
+	return (str.replace(/%(\d+)%/g, function(a, b) {
+		let char = String.fromCharCode(parseInt(b));
+		return ((/[a-mo-zA-Z0-9]/.test(char) ? "" : "\\") + char);
+	}));
+}
+
+function decodePlain(str) {
+	return (str.replace(/%(\d+)%/g, function(a, b) {
+		let char = String.fromCharCode(parseInt(b));
+		return (char === 'n' ? '\n' : char);
+	}));
+}
+
 class QuizParser {
 	constructor() {
 		this.testQuestions = [];
@@ -69,7 +89,7 @@ class QuizParser {
 	}
 
 	parseQuestion(question, category) {
-		let sp = question.split(/\r?\n|\r/g);
+		let sp = encodeEscape(question).split(/\r?\n|\r/g);
 		// Remove last element if it does not contain characters
 		if (!/\S/.test(sp[sp.length - 1])) {
 			sp.pop();
@@ -102,9 +122,9 @@ class QuizParser {
 	}
 
 	cleanUp(sp) {
-		sp[0] = sp[0].trim().replace(/  +/g, ' ');
+		sp[0] = sp[0].trim();
 		for (let i = 1; i < sp.length; ++i) {
-			sp[i] = this.cleanEmptySlots(sp[i].trim().replace(/  +/g, ' ').split(/ ?-> ?/g));
+			sp[i] = this.cleanEmptySlots(sp[i].trim().split(/ ?-> ?/g));
 			if (sp[i].length > 1) {
 				sp[i][0] = this.cleanEmptySlots(sp[i][0].split(/ ?, ?/g));
 			}
@@ -199,12 +219,14 @@ class QuizParser {
 	}
 
 	createRegExpAnswer(answers) {
-		let sp = answers.split(/\s*,\s*/g);
+		let sp = answers.split(/,/g);
 		for (let i = 0; i < sp.length; ++i) {
+			sp[i] = sp[i].trim();
 			sp[i] = this.escapeRegExp(this.swapIfFirstOption(sp[i]).replace(/\s(\(+)/g, '$1 '));
 			sp[i] = sp[i].replace(/\)/g, ')?');
+			sp[i] = '^' + sp[i] + '$';
 		}
-		return new RegExp('^' + sp.join('|') + '$', 'gi');
+		return new RegExp(decodeEscape(sp.join('|')), 'i');
 	}
 
 	createFinalAnswer(answer) {
@@ -232,17 +254,17 @@ class QuizParser {
 				}
 			}
 		}
-		return answer.trim()[0] + '...';
+		return decodePlain(answer).trim()[0] + '...';
 	}
 
 	parseSingleFormat(question, sp, category) {
-		let fAnswer = sp[1][0].split(',')[0];
+		let fAnswer = sp[1][0].split(',')[0].trim();
 		this.testQuestions.push({
 			'category': category,
-			'question': sp[0],
+			'question': decodePlain(sp[0]),
 			'answer': this.createRegExpAnswer(sp[1][0]),
 			'hint': this.createHint(fAnswer),
-			'finalAnswer': this.createFinalAnswer(fAnswer)
+			'finalAnswer': decodePlain(this.createFinalAnswer(fAnswer))
 		});
 	}
 
@@ -252,13 +274,13 @@ class QuizParser {
 			for (let h = 0; h < sp[i][0].length; ++h) {
 				q = q.replace(/___/, sp[i][0][h]);
 			}
-			let fAnswer = sp[i][1].split(',')[0];
+			let fAnswer = sp[i][1].split(',')[0].trim();
 			this.testQuestions.push({
 				'category': category,
-				'question': q,
+				'question': decodePlain(q),
 				'answer': this.createRegExpAnswer(sp[i][1]),
 				'hint': this.createHint(fAnswer),
-				'finalAnswer': this.createFinalAnswer(fAnswer)
+				'finalAnswer': decodePlain(this.createFinalAnswer(fAnswer))
 			});
 		}
 	}

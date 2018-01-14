@@ -35,8 +35,9 @@ function executeCommand(message) {
 }
 
 module.exports.interact = function(message) {
-	message.content = message.content.replace(/\s+/g, ' ').trim();
+	let cleaned = message.content.replace(/\s+/g, ' ').trim();
 	if (message.content.charAt(0) === '!') {
+		message.content = cleaned;
 		executeCommand(message);
 		return;
 	}
