@@ -70,6 +70,9 @@ module.exports = {
 				readfile: {
 					EN: "Readfile error: {file}: {error}."
 				},
+				writefile: {
+					EN: "Writefile error: {file}: {error}."
+				},
 				missingQA: {
 					EN: "Warning: Missing question or answer for the block:\n{question}\nQuestion ignored."
 				},
@@ -144,8 +147,7 @@ module.exports = {
 				FR: [
 					"Dans la catégorie *{category}*, **{question}**",
 					"En *{category}*, **{question}**",
-					"Nous avons *{category}*... Top ! **{question}**",
-					"*{category}*... Top ! **{question}**"
+					"Nous avons *{category}*... Top ! **{question}**"
 				]
 			},
 			nextQuestion: {

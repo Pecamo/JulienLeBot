@@ -23,6 +23,10 @@ class QuestionsQueue {
 		});
 	}
 
+	getCurrentCategory() {
+		return ((this.questions[this.qid].hasOwnProperty('category') && this.questions[this.qid].category) ? this.questions[this.qid].category : null);
+	}
+
 	getCurrentQuestion() {
 		return (this.questions[this.qid].question);
 	}

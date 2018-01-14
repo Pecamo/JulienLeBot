@@ -41,7 +41,7 @@ class QuizParser {
 						console.log(local.get(local.data.parser.log.readfile, {file: items[i], error: err}));
 						error = true;
 					} else if (!error) {
-						this.parseFileContent(data);
+						this.parseFileContent(data, items[i].split('.')[0]);
 					}
 					parsed++;
 					if (parsed >= items.length) {
@@ -58,17 +58,17 @@ class QuizParser {
 		});
 	}
 
-	parseFileContent(content) {
+	parseFileContent(content, category) {
 		// Remove comments
 		content = content.replace(/(\/{3,}.*(?:\r?\n|\r)?)/g, "");
 		let questions = content.match(/((?:.+(?:\r?\n|\r)?)+)/g);
 		if (!questions) return;
 		for (let i = 0; i < questions.length; ++i) {
-			this.parseQuestion(questions[i]);
+			this.parseQuestion(questions[i], category);
 		}
 	}
 
-	parseQuestion(question) {
+	parseQuestion(question, category) {
 		let sp = question.split(/\r?\n|\r/g);
 		// Remove last element if it does not contain characters
 		if (!/\S/.test(sp[sp.length - 1])) {
@@ -83,9 +83,9 @@ class QuizParser {
 		let holes = (sp[0].match(/___/g) || []).length;
 		if (this.checkAnswersFormat(question, sp, holes, originals)) {
 			if (holes) {
-				this.parseMultipleFormat(question, sp);
+				this.parseMultipleFormat(question, sp, category);
 			} else {
-				this.parseSingleFormat(question, sp);
+				this.parseSingleFormat(question, sp, category);
 			}
 		}
 	}
@@ -235,9 +235,10 @@ class QuizParser {
 		return answer.trim()[0] + '...';
 	}
 
-	parseSingleFormat(question, sp) {
+	parseSingleFormat(question, sp, category) {
 		let fAnswer = sp[1][0].split(',')[0];
 		this.testQuestions.push({
+			'category': category,
 			'question': sp[0],
 			'answer': this.createRegExpAnswer(sp[1][0]),
 			'hint': this.createHint(fAnswer),
@@ -245,7 +246,7 @@ class QuizParser {
 		});
 	}
 
-	parseMultipleFormat(question, sp) {
+	parseMultipleFormat(question, sp, category) {
 		for (let i = 1; i < sp.length; ++i) {
 			let q = sp[0];
 			for (let h = 0; h < sp[i][0].length; ++h) {
@@ -253,6 +254,7 @@ class QuizParser {
 			}
 			let fAnswer = sp[i][1].split(',')[0];
 			this.testQuestions.push({
+				'category': category,
 				'question': q,
 				'answer': this.createRegExpAnswer(sp[i][1]),
 				'hint': this.createHint(fAnswer),

@@ -6,7 +6,7 @@ var QuestionsQueue = require('./QuestionsQueue');
 var Timer = require('./Timer');
 var Scoreboard = require('./Scoreboard');
 
-const QUIZ_TIMER = 4;
+const QUIZ_TIMER = 40;
 
 class Quiz {
 	constructor(channel, quizManager) {
@@ -15,6 +15,7 @@ class Quiz {
 		this.scoreboard = new Scoreboard();
 		this.timer = new Timer();
 		this.paused = false;
+		this.canAnswer = false;
 		this.channel.send(local.get(local.data.quiz.start));
 		this.questionsQueue = new QuestionsQueue((err = '') => {
 			if (err) {
@@ -38,7 +39,14 @@ class Quiz {
 	}
 
 	nextQuestion() {
-		this.channel.send(local.get(local.data.quiz.question, {question: this.questionsQueue.getCurrentQuestion()}));
+		this.canAnswer = true;
+		let question = this.questionsQueue.getCurrentQuestion();
+		let category = this.questionsQueue.getCurrentCategory();
+		if (category) {
+			this.channel.send(local.get(local.data.quiz.categoryQuestion, {category: category, question: question}));			
+		} else {
+			this.channel.send(local.get(local.data.quiz.question, {question: question}));			
+		}
 		this.timer.reset(() => {
 			this.giveHint();
 		}, QUIZ_TIMER / 2 * 1000);
@@ -52,6 +60,7 @@ class Quiz {
 	}
 
 	endQuestion(found = false) {
+		this.canAnswer = false;
 		if (!found) {
 			this.channel.send(local.get(local.data.quiz.noAnswer, {answer: this.questionsQueue.getFinalAnswer()}));
 		}
@@ -66,9 +75,10 @@ class Quiz {
 	}
 
 	checkAnswer(message) {
-		if (!this.paused && this.questionsQueue.checkAnswer(message.content)) {
+		if (!this.paused && this.canAnswer && this.questionsQueue.checkAnswer(message.content)) {
 			let score = this.scoreboard.addPoints(message.author, 1);
 			this.timer.pause();
+			this.scoreboard.saveScore('score.txt');
 			this.channel.send(local.get(local.data.quiz.goodAnswer, {answer: message.content, username: message.author.username}) + "\n" + local.get(local.data.quiz.userScore, {username: message.author.username, score: score}));
 			this.endQuestion(true);
 		}

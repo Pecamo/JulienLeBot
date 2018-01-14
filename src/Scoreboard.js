@@ -1,6 +1,7 @@
 'use strict';
 
 var local = require('./localization');
+var fs = require('fs');
 
 class Scoreboard {
 	constructor() {
@@ -31,6 +32,21 @@ class Scoreboard {
 				break;
 		}
 		return '';
+	}
+
+	saveScore(file) {
+		this.scoreboard.sort(function(a, b) {
+			return b.score - a.score;
+		});
+		let content = '';
+		for (let i = 0; i < this.scoreboard.length; ++i) {
+			content += this.scoreboard[i].user.username + ' ' + this.scoreboard[i].score + '\n';
+		}
+		fs.writeFile(file, content, (err) => {
+			if (err) {
+				console.log(local.get(local.data.parser.log.writefile, {file: file, error: err}));
+			}
+		});
 	}
 
 	showScore(channel) {
