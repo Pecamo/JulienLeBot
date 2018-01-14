@@ -236,7 +236,9 @@ class QuizParser {
 	createHint(answer) {
 		let start = -1;
 		let par = 0;
-		for (let i = 0; i < answer.length; ++i) {
+		let answer_length = answer.length;
+		let hint_percent = 10;
+		for (let i = 0; i < answer_length; ++i) {
 			if (answer[i] == '(') {
 				par++;
 				if (start < 0) {
@@ -254,7 +256,7 @@ class QuizParser {
 				}
 			}
 		}
-		return decodePlain(answer).trim()[0] + '...';
+		return decodePlain(answer).trim().slice(0, Math.ceil(answer_length / 100 * hint_percent)) + '...';
 	}
 
 	parseSingleFormat(question, sp, category) {
