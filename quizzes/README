@@ -2,3 +2,27 @@ Add your quizzes here.
 
 Guideline:
 - All quizzes have to end with .txt
+
+Format:
+
+- Questions are separated by at least two blank lines.
+- The first lines of a question contains the question paragraphs, where ___ (three underscores) denote holes.
+- Next lines contain hole values (for all paragraphs) separated by commas, 
+  followed by -> then the possible answers, also separated by commas.
+- If there are no holes, the answers must be preceded by -> anyway.
+- Answers may contain parenthesized portions, which are optional.
+
+Who ran against Jimmy Carter in 1976?
+-> (Gerald (R.)) Ford
+
+Who was elected President of ___ in ___?
+the United States, 2008 -> (Barack) Obama
+France, 2012 -> (François) Hollande
+
+In which year was ___ elected President of the United States?
+Franklin D. Roosevelt -> 1932, 1936, 1940, 1944
+Harry S Truman -> 1948
+
+This country was ruled by George W. Bush from 2000 to 2008.
+It led the First World during the Cold War.
+-> (The) United States, US(A), U.S.(A.)
