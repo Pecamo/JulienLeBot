@@ -30,16 +30,38 @@ module.exports = {
 			description: getLocal(data, args)
 		}};
 	},
-	infoCustom: function(data, embedData, args = {}) {
+	embedInfo: function(embedData, args = {}) {
 		embedData.color = 4886754;
 		return {embed: embedData};
 	},
 	data: {
 		commands: {
-			info: {
-				FR: "`!help` pour accéder à la liste des commandes."
+			general: {
+				info: {
+					FR: "`!help` pour accéder à la liste des commandes."
+				},
+				description: {
+					FR: "Liste des commandes disponibles.\n\n`!help` - Affiche l'aide\n`!quiz <option>` - Utilise une commande de quiz."
+				},
+				title: {
+					FR: "Commandes"
+				},
+				footer: {
+					FR: "`!help <commande>` pour plus d'informations sur une commande."
+				},
+			},
+			shortcut: {
+				title: {
+					FR: "Raccourcis"
+				}
 			},
 			quiz: {
+				title: {
+					FR: "Commande quiz"
+				},
+				description: {
+					FR: "Liste des commandes de quiz.\n\n`!quiz start` - Lance un quiz dans le channel\n`!quiz pause` - Met en pause le quiz\n`!quiz resume` - Reprend le quiz mis en pause\n`!quiz stop` - Arrête le quiz\n`!quiz score` - Affiche le score du quiz en cours\n`!quiz list` - Liste les quiz disponibles\n`!quiz left` - Affiche le nombre de questions restantes"
+				},
 				error: {
 					noDM: {
 						FR: "Cette commande est uniquement disponible sur un channel public."

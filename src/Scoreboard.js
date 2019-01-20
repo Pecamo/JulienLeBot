@@ -28,7 +28,7 @@ class Scoreboard {
 			case 3:
 				return ":third_place: ";
 		}
-		return '';
+		return ":medal:";
 	}
 
 	saveScore(file) {
@@ -50,7 +50,7 @@ class Scoreboard {
 		let content = {
 			color: 4886754,
 			title: "**" + local.get(local.data.quiz.scoreboardTitle) + "**",
-			fields: []
+			description: "\u200b\n"
 		};
 		if (this.scoreboard.length > 0) {
 			this.scoreboard.sort(function(a, b) {
@@ -58,31 +58,13 @@ class Scoreboard {
 			});
 			let place = 1;
 			let realplace = place;
-			let names = "";
-			let scores = "";
 			for (let i = 0; i < this.scoreboard.length; ++i) {
 				realplace++;
-				if (i > 0) {
-					names += '\n';
-					scores += '\n';
-				}
-				names += this.getPlaceEmoji(place) + "*" + this.scoreboard[i].user.username + "*<:empty:401167295256461315>";
-				scores += this.scoreboard[i].score + "<:empty:401167295256461315>";
+				content.description += this.getPlaceEmoji(place) + " " + this.scoreboard[i].score + " - *" + this.scoreboard[i].user.username + "*\n";
 				if (i < this.scoreboard.length - 1 && this.scoreboard[i].score > this.scoreboard[i + 1].score) {
 					place = realplace;
 				}
 			}
-			content.fields.push({
-				name: "Username",
-				value: names,
-				inline: true
-			});
-			content.fields.push({
-				name: "Score",
-				value: scores,
-				inline: true
-			});
-
 		} else {
 			content.description = local.get(local.data.quiz.noPoint);
 		}
