@@ -1,4 +1,4 @@
 node_modules
-quizzes/*.txt
+quizzes/**/*.txt
 score.txt
 token.js

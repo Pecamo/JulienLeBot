@@ -4,8 +4,9 @@
   "description": "A simple quiz bot",
   "main": "JulienLeBot.js",
   "dependencies": {
-    "bufferutil": "^3.0.3",
-    "discord.js": "^11.2.1"
+    "bufferutil": "4.0.1",
+    "discord.js": "11.4.2",
+    "npm": "^6.6.0"
   },
   "devDependencies": {},
   "scripts": {
