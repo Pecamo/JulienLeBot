@@ -1,5 +1,3 @@
-'use strict';
-
 const local = require('./localization');
 const fs = require('fs');
 

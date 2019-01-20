@@ -2,4 +2,5 @@ node_modules
 quizzes/**/*.txt
 score.txt
 token.js
-.idea/*
+.idea/**/*
+dist/**/*

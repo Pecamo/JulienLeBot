@@ -1,5 +1,3 @@
-'use strict';
-
 const QuizParser = require('./QuizParser');
 
 /** Returns a random integer between min (inclusive) and max (inclusive) */

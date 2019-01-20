@@ -2,13 +2,18 @@
   "name": "JulienLeBot",
   "version": "1.0.0",
   "description": "A simple quiz bot",
-  "main": "index.js",
   "dependencies": {
-    "bufferutil": "4.0.1",
     "discord.js": "11.4.2"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "ts-loader": "^5.3.3",
+    "typescript": "^3.2.4",
+    "webpack": "^4.28.4",
+    "webpack-cli": "^3.2.1"
+  },
   "scripts": {
+    "build": "webpack --config webpack.config.js",
+    "start": "node dist/JulienLeBot.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [

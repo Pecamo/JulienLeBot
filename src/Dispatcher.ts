@@ -1,13 +1,15 @@
-'use strict';
-
 class Dispatcher {
-	constructor(paths, error, aliases = []) {
+	paths: any;
+	error: any;
+	aliases: Array<any>;
+
+	constructor(paths: any, error: any, aliases: Array<any> = []) {
 		this.paths = paths;
 		this.error = error;
 		this.aliases = aliases;
 	}
 
-	dispatch(cmd) {
+	dispatch(cmd: any) {
 		if (this.aliases.hasOwnProperty(cmd[0])) {
 			let alias = cmd.shift();
 			for (let i = this.aliases[alias].length - 1; i >= 0; --i) {
@@ -21,4 +23,4 @@ class Dispatcher {
 	}
 }
 
-module.exports = Dispatcher;
+export default Dispatcher;
