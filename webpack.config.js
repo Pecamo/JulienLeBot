@@ -1,9 +1,10 @@
 const path = require('path');
+const webpack = require("webpack");
 
 module.exports = {
-  entry: './src/index.ts',
+  entry: './index.ts',
   devtool: 'inline-source-map',
-  mode: 'production',
+  mode: 'development',
   module: {
     rules: [
       {
@@ -14,12 +15,15 @@ module.exports = {
   },
   resolve: {
     extensions: [ '.ts', '.js', '.json' ],
-    alias: {
-      discordjs: path.resolve(__dirname, 'node_modules/discord.js/')
-    },
-    modules: ['src', 'node_modules'],
+    modules: ['src', 'node_modules', 'config', '.']
   },
   node: { fs: 'empty' },
+  plugins: [
+    new webpack.WatchIgnorePlugin([
+      /\.js$/,
+      /\.d\.ts$/
+    ])
+  ],
   output: {
     filename: 'JulienLeBot.js',
     path: path.resolve(__dirname, 'dist')
