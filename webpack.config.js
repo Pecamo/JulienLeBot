@@ -5,6 +5,7 @@ module.exports = {
   entry: './index.ts',
   devtool: 'inline-source-map',
   mode: 'development',
+  target: 'node',
   module: {
     rules: [
       {

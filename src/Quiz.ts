@@ -2,7 +2,7 @@
 
 import * as local from './localization';
 import QuestionsQueue from './QuestionsQueue';
-import QuizManager from './QuizManager';
+import QuizManagerInterface from './QuizManager';
 import Scoreboard from './Scoreboard';
 import Timer from './Timer';
 
@@ -10,14 +10,14 @@ const QUIZ_TIMER = 40;
 
 class Quiz {
   private readonly channel: any;
-  private manager: QuizManager;
+  private manager: QuizManagerInterface;
   private scoreboard: Scoreboard;
   private timer: Timer;
   private paused: boolean;
   private canAnswer: boolean;
   private questionsQueue: QuestionsQueue;
 
-  constructor(channel: any, quizManager: QuizManager) {
+  constructor(channel: any, quizManager: QuizManagerInterface) {
     this.channel = channel;
     this.manager = quizManager;
     this.scoreboard = new Scoreboard();

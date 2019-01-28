@@ -4,8 +4,9 @@ import * as fs from 'fs';
 import Dispatcher from './Dispatcher';
 import * as local from './localization';
 import Quiz from './Quiz';
+import QuizManagerInterface from './QuizManagerInterface';
 
-class QuizManager {
+class QuizManager implements QuizManagerInterface {
   private pool: Array<any>;
   private dispatcher: Dispatcher;
   constructor() {
@@ -106,8 +107,8 @@ class QuizManager {
   listCommand(self: any, message: any, cmd: any) {
     fs.readdir('./quizzes', (err, items) => {
       if (err) {
-        console.log(local.error(local.translations.parser.log.readdir, {directory: './quizzes', error: err}));
-        callback(local.get(local.translations.parser.user.readdir), []); // TODO : Figure out where does this come from
+        console.log(local.get(local.translations.parser.log.readdir, {directory: './quizzes', error: err}));
+        message.channel.send(local.error(local.translations.parser.user.readdir));
         return;
       }
       if (items.length < 1) {
