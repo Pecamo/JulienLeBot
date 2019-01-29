@@ -24,7 +24,7 @@ function quizCommand(message: any, cmd: any) {
 }
 
 function errorHandling(message: any, cmd: any) {
-  message.channel.send(local.info(local.translations.commands.info));
+  message.channel.send(local.info(local.translations.commands.general.info));
 }
 
 function executeCommand(message: any) {
