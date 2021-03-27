@@ -1,16 +1,27 @@
 {
-  "name": "julienlebot",
+  "name": "JulienLeBot",
   "version": "1.0.0",
   "description": "A simple quiz bot",
-  "main": "JulienLeBot.js",
   "dependencies": {
-    "bufferutil": "4.0.1",
-    "discord.js": "11.4.2",
-    "npm": "^6.6.0"
+    "discord.js": "11.4.2"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "@types/node": "10.12.18",
+    "ts-loader": "5.3.3",
+    "tslint": "5.12.1",
+    "tslint-config-airbnb": "5.11.1",
+    "tslint-eslint-rules": "5.4.0",
+    "typescript": "3.2.4",
+    "webpack": "4.28.4",
+    "webpack-cli": "3.2.1"
+  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "webpack",
+    "dev": "webpack --watch",
+    "start": "node dist/JulienLeBot.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "tslint --project tsconfig.json src/**/*.{ts,tsx}",
+    "fix-all": "tslint --project tsconfig.json --fix src/**/*.{ts,tsx}"
   },
   "keywords": [
     "discord",
@@ -19,6 +30,7 @@
     "nodejs",
     "javascript"
   ],
-  "author": "Gerardufoin",
+  "main": "webpack.config.js",
+  "author": "Gerardufoin, Protectator",
   "license": "MIT"
 }
