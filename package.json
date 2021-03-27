@@ -13,7 +13,7 @@
     "tslint-eslint-rules": "5.4.0",
     "typescript": "3.2.4",
     "webpack": "4.28.4",
-    "webpack-cli": "3.2.1"
+    "webpack-cli": "^4.6.0"
   },
   "scripts": {
     "build": "webpack",
