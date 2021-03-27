@@ -19,7 +19,7 @@ To run the build process once :
 To run the development process :
 - `npm run dev`
 
-## Useage
+## Usage
 
 Once you built the app, fill in your bot credentials in `config/token.json`, and then you run the bot using :
 - `npm run start`
