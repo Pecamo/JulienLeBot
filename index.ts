@@ -1,5 +1,5 @@
 import { Client } from 'discord.js';
-import { token } from './config/token.json';
+import fs from 'fs';
 import interact from './src/interactions';
 
 const client = new Client();
@@ -13,5 +13,7 @@ client.on('message', (message: any) => {
     interact(message);
   }
 });
+
+const { token } = JSON.parse(fs.readFileSync('./config/token.json', 'utf-8'));
 
 client.login(token);
